@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,10 +7,10 @@ public class GameTile : MonoBehaviour
     [SerializeField]
     Transform arrow = default;
 
-    //ËÄ¸öÏàÁÚµÄ
+    //å››ä¸ªç›¸é‚»çš„
     GameTile north, east, south, west, nextOnPath;
 
-    //ÓëÄ¿µÄµØÖ®¼äµÄ¾àÀë
+    //ä¸ç›®çš„åœ°ä¹‹é—´çš„è·ç¦»
     int distance;
 
     public void ClearPath()
@@ -27,19 +27,58 @@ public class GameTile : MonoBehaviour
 
     public bool HasPath => distance != int.MaxValue;
 
-    //±êÊ¶¶«±ßºÍÎ÷±ßµÄÁ½¿éÊÇÏàÁÚµÄ
+    static Quaternion
+      northRotation = Quaternion.Euler(90f, 0f, 0f),
+      eastRotation = Quaternion.Euler(90f, 90f, 0f),
+      southRotation = Quaternion.Euler(90f, 180f, 0f),
+      westRotation = Quaternion.Euler(90f, 270f, 0f);
+
+
+    //æ ‡è¯†ä¸œè¾¹å’Œè¥¿è¾¹çš„ä¸¤å—æ˜¯ç›¸é‚»çš„
     public static void MakeEastWestNeigbors(GameTile east,GameTile west)
     {
-        Debug.Assert(west.east == null && east.west == null, "ÖØ¸´¶¨ÒåÁËÁÚ¾Ó east west");
+        Debug.Assert(west.east == null && east.west == null, "é‡å¤å®šä¹‰äº†é‚»å±… east west");
         west.east = east;
         east.west = west;
     }
 
-    //±êÊ¶±±±ßºÍÄÏ±ßµÄÁ½¿éÊÇÏàÁÚµÄ
+    //æ ‡è¯†åŒ—è¾¹å’Œå—è¾¹çš„ä¸¤å—æ˜¯ç›¸é‚»çš„
     public static void MakeNorthSouthNeigbors(GameTile north, GameTile south)
     {
-        Debug.Assert(south.north == null && north.south == null, "ÖØ¸´¶¨ÒåÁËÁÚ¾Ó north south");
+        Debug.Assert(south.north == null && north.south == null, "é‡å¤å®šä¹‰äº†é‚»å±… north south");
         south.north = north;
         north.south = south;
+    }
+
+    public GameTile GrowPathNorth() => GrowPathTo(north);
+    public GameTile GrowPathEast()=> GrowPathTo(east);
+    public GameTile GrowPathSouth() => GrowPathTo(south);
+    public GameTile GrowPathWest() => GrowPathTo(west);
+
+    public bool IsAlternative { get; set; }
+
+    private GameTile GrowPathTo(GameTile neighbor)
+    {
+        Debug.Assert(HasPath, "No Path!");
+        //ä¿è¯é‚»å±…ä¸ä¸ºç©º è€Œä¸”è¿˜æ²¡æœ‰è·¯å¾„
+        if (neighbor == null || neighbor.HasPath) return null;
+        neighbor.distance = distance + 1;
+        neighbor.nextOnPath = this;
+        return neighbor;
+    }
+
+    public void ShowPath()
+    {
+        if (distance == 0)
+        {
+            arrow.gameObject.SetActive(false);
+            return;
+        }
+        arrow.gameObject.SetActive(true);
+        arrow.localRotation =
+            nextOnPath == north ? northRotation :
+            nextOnPath == east ? eastRotation :
+            nextOnPath == south ? southRotation :
+            westRotation;
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +13,11 @@ public class GameBoard : MonoBehaviour
     Vector2Int size;
 
     GameTile[] tiles;
+
+    Queue<GameTile> searchFrontier = new Queue<GameTile>();
+
+  
+
     public void Initialize(Vector2Int size)
     {
         this.size = size;
@@ -40,7 +45,52 @@ public class GameBoard : MonoBehaviour
                 {
                     GameTile.MakeNorthSouthNeigbors(tile, tiles[i - size.x]);
                 }
+                tile.IsAlternative = (x & 1) == 0;//为0说明是偶数
+                if ((y & 1) == 0)
+                {
+                    tile.IsAlternative = !tile.IsAlternative;
+                }
             }
         }
+        FindPaths();
     }
+
+
+    public void FindPaths()
+    {
+        foreach(GameTile tile in tiles)
+        {
+            tile.ClearPath();
+        }
+        tiles[tiles.Length/2].SetDestination();
+        searchFrontier.Enqueue(tiles[tiles.Length/2]); 
+        
+        while(searchFrontier.Count > 0)
+        {
+            GameTile tile = searchFrontier.Dequeue();
+            if (tile == null) continue;
+            if (tile.IsAlternative)
+            {
+                searchFrontier.Enqueue(tile.GrowPathNorth());
+                searchFrontier.Enqueue(tile.GrowPathSouth());
+                searchFrontier.Enqueue(tile.GrowPathEast());
+                searchFrontier.Enqueue(tile.GrowPathWest());
+            }
+            else
+            {
+                searchFrontier.Enqueue(tile.GrowPathWest());
+                searchFrontier.Enqueue(tile.GrowPathEast());
+                searchFrontier.Enqueue(tile.GrowPathSouth());
+                searchFrontier.Enqueue(tile.GrowPathNorth());
+            }
+           
+        }
+        //show path
+        foreach(GameTile tile in tiles)
+        {
+            tile.ShowPath();
+        }
+    }
+
+  
 }
