@@ -10,9 +10,22 @@ public class Game : MonoBehaviour
     [SerializeField]
     GameBoard board = default;
 
+    [SerializeField]
+    GameTileContentFactory tileContentFactory = default;
+
+    Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
+
     private void Awake()
     {
         board.Initialize(boardSize);
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            HandleTouch();
+        }
     }
 
     private void OnValidate()
@@ -26,4 +39,15 @@ public class Game : MonoBehaviour
             boardSize.y = 2;
         }
     }
+
+
+    private void HandleTouch()
+    {
+        GameTile tile = board.GetTile(TouchRay);
+        if (tile != null)
+        {
+            tile.Content = tileContentFactory.Get(GameTileContentType.Destination);
+        }
+    }
+
 }

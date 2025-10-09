@@ -13,6 +13,19 @@ public class GameTile : MonoBehaviour
     //与目的地之间的距离
     int distance;
 
+    GameTileContent content;
+    public GameTileContent Content
+    {
+        get => content;
+        set
+        {
+            Debug.Assert(value != null, "Null assigned to content");
+            if (content != null) content.Recycle();
+            content = value;
+            content.transform.localPosition = transform.localPosition;
+        }
+    }
+
     public void ClearPath()
     {
         distance = int.MaxValue;
@@ -81,4 +94,9 @@ public class GameTile : MonoBehaviour
             nextOnPath == south ? southRotation :
             westRotation;
     }
+}
+
+public enum GameTileContentType
+{
+    Empty,Destination
 }
