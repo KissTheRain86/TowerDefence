@@ -16,6 +16,8 @@ public class GameBoard : MonoBehaviour
 
     Queue<GameTile> searchFrontier = new Queue<GameTile>();
 
+    GameTileContentFactory contentFactory;
+
     public GameTile GetTile(Ray ray)
     {
         if (Physics.Raycast(ray,out RaycastHit hit))
@@ -31,9 +33,10 @@ public class GameBoard : MonoBehaviour
         return null;
     }
 
-    public void Initialize(Vector2Int size)
+    public void Initialize(Vector2Int size,GameTileContentFactory contentFactory)
     {
         this.size = size;
+        this.contentFactory = contentFactory;
         ground.localScale = new Vector3(size.x, size.y, 1f);
 
         Vector2 offset = new Vector2(
@@ -63,20 +66,30 @@ public class GameBoard : MonoBehaviour
                 {
                     tile.IsAlternative = !tile.IsAlternative;
                 }
+                tile.Content = contentFactory.Get(GameTileContentType.Empty);
             }
         }
-        FindPaths();
+        ToggleDestination(tiles[tiles.Length / 2]);
     }
 
 
-    public void FindPaths()
+    public bool FindPaths()
     {
         foreach(GameTile tile in tiles)
         {
-            tile.ClearPath();
+            if(tile.Content.Type == GameTileContentType.Destination)
+            {
+                tile.BecomeDestination();
+                searchFrontier.Enqueue(tile);
+            }
+            else
+            {
+                tile.ClearPath();
+            }
         }
-        tiles[tiles.Length/2].SetDestination();
-        searchFrontier.Enqueue(tiles[tiles.Length/2]); 
+        if(searchFrontier.Count==0) return false;
+        //tiles[tiles.Length/2].BecomeDestination();
+        //searchFrontier.Enqueue(tiles[tiles.Length/2]); 
         
         while(searchFrontier.Count > 0)
         {
@@ -103,7 +116,24 @@ public class GameBoard : MonoBehaviour
         {
             tile.ShowPath();
         }
+        return true;
     }
 
-  
+    public void ToggleDestination(GameTile tile)
+    {
+        if (tile.Content.Type == GameTileContentType.Destination)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Empty);
+            if (!FindPaths())
+            {
+                tile.Content = contentFactory.Get(GameTileContentType.Destination);
+                FindPaths();
+            }
+        }
+        else
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Destination);
+            FindPaths();
+        }
+    }
 }

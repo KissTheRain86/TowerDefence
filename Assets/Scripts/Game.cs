@@ -17,7 +17,7 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
-        board.Initialize(boardSize);
+        board.Initialize(boardSize, tileContentFactory);
     }
 
     private void Update()
@@ -46,7 +46,8 @@ public class Game : MonoBehaviour
         GameTile tile = board.GetTile(TouchRay);
         if (tile != null)
         {
-            tile.Content = tileContentFactory.Get(GameTileContentType.Destination);
+            //tile.Content = tileContentFactory.Get(GameTileContentType.Destination);
+            board.ToggleDestination(tile);
         }
     }
 

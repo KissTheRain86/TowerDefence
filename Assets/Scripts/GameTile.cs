@@ -32,7 +32,7 @@ public class GameTile : MonoBehaviour
         nextOnPath = null;
     }
 
-    public void SetDestination()
+    public void BecomeDestination()
     {
         distance = 0;
         nextOnPath = null;
