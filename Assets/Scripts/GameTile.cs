@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Accessibility;
 
 public class GameTile : MonoBehaviour
 {
@@ -74,10 +75,11 @@ public class GameTile : MonoBehaviour
     {
         Debug.Assert(HasPath, "No Path!");
         //保证邻居不为空 而且还没有路径
-        if (neighbor == null || neighbor.HasPath) return null;
+        if (!HasPath || neighbor == null || neighbor.HasPath) return null;
         neighbor.distance = distance + 1;
         neighbor.nextOnPath = this;
-        return neighbor;
+        
+        return neighbor.Content.Type!=GameTileContentType.Wall? neighbor:null;
     }
 
     public void ShowPath()
@@ -94,9 +96,12 @@ public class GameTile : MonoBehaviour
             nextOnPath == south ? southRotation :
             westRotation;
     }
+
+    public void HidePath()
+    {
+        arrow.gameObject.SetActive(false);
+    }
+
+
 }
 
-public enum GameTileContentType
-{
-    Empty,Destination
-}

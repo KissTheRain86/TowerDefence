@@ -10,6 +10,9 @@ public class GameBoard : MonoBehaviour
     [SerializeField]
     GameTile tilePrefab = default;
 
+    [SerializeField]
+    Texture2D gridTexture = default;
+
     Vector2Int size;
 
     GameTile[] tiles;
@@ -17,6 +20,50 @@ public class GameBoard : MonoBehaviour
     Queue<GameTile> searchFrontier = new Queue<GameTile>();
 
     GameTileContentFactory contentFactory;
+
+    bool showGrid,showPaths;
+
+    public bool ShowPaths
+    {
+        get => showPaths;
+        set
+        {
+            showPaths = value;
+            if (showPaths)
+            {
+                foreach(var tile in tiles)
+                {
+                    tile.ShowPath();
+                }
+            }
+            else
+            {
+                foreach(var tile in tiles)
+                {
+                    tile.HidePath();
+                }
+            }
+        }
+    }
+
+    public bool ShowGrid
+    {
+        get => showGrid;
+        set
+        {
+            showGrid = value;
+            Material m = ground.GetComponent<MeshRenderer>().material;
+            if (showGrid)
+            {
+                m.mainTexture = gridTexture;
+                m.SetTextureScale("_BaseMap", size);
+            }
+            else
+            {
+                m.mainTexture = null;
+            }
+        }
+    }
 
     public GameTile GetTile(Ray ray)
     {
@@ -111,14 +158,28 @@ public class GameBoard : MonoBehaviour
             }
            
         }
-        //show path
+        
+        //如果有一个格子无法到达终点 寻路失败
         foreach(GameTile tile in tiles)
         {
-            tile.ShowPath();
+            if(!tile.HasPath) return false;
         }
+        //寻路成功 显示结果
+        if (showPaths)
+        {
+            foreach (GameTile tile in tiles)
+            {
+                tile.ShowPath();
+            }
+        }
+        
         return true;
     }
 
+    /// <summary>
+    /// 切换为目的地
+    /// </summary>
+    /// <param name="tile"></param>
     public void ToggleDestination(GameTile tile)
     {
         if (tile.Content.Type == GameTileContentType.Destination)
@@ -128,12 +189,32 @@ public class GameBoard : MonoBehaviour
             {
                 tile.Content = contentFactory.Get(GameTileContentType.Destination);
                 FindPaths();
-            }
+            }     
         }
-        else
+        else if(tile.Content.Type == GameTileContentType.Empty)
         {
             tile.Content = contentFactory.Get(GameTileContentType.Destination);
             FindPaths();
+        }      
+    }     
+
+    //切换为wall
+    public void ToggleWall(GameTile tile)
+    {
+        if(tile.Content.Type == GameTileContentType.Wall)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Empty);
+            FindPaths();
+        }
+        else if(tile.Content.Type == GameTileContentType.Empty)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Wall);
+            if (!FindPaths())
+            {
+                //回退
+                tile.Content = contentFactory.Get(GameTileContentType.Empty);
+                FindPaths();
+            }
         }
     }
 }

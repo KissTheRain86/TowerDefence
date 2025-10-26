@@ -25,3 +25,8 @@ public class GameTileContent : MonoBehaviour
         originFactory.Reclaim(this);
     }
 }
+
+public enum GameTileContentType
+{
+    Empty, Destination, Wall
+}

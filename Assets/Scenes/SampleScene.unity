@@ -543,6 +543,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5777483184089204485, guid: ed12b6c5a8705aa498904ff300500a90,
+        type: 3}
+      propertyPath: gridTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: f8729faaaa75c4d48ac13077b135a680, type: 3}
     - target: {fileID: 6157225918721723275, guid: ed12b6c5a8705aa498904ff300500a90,
         type: 3}
       propertyPath: m_Name

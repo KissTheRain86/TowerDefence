@@ -7,10 +7,13 @@ using UnityEngine.SceneManagement;
 public class GameTileContentFactory : ScriptableObject
 {
     [SerializeField]
-    GameTileContent destinationPrefab;
+    GameTileContent destinationPrefab = default;
 
     [SerializeField]
-    GameTileContent emptyPrefab;
+    GameTileContent emptyPrefab = default;
+
+    [SerializeField]
+    GameTileContent wallPrefab = default;
 
 
     Scene contentScene;
@@ -26,6 +29,7 @@ public class GameTileContentFactory : ScriptableObject
         {
             case GameTileContentType.Destination: return Get(destinationPrefab);
             case GameTileContentType.Empty: return Get(emptyPrefab);
+            case GameTileContentType.Wall : return Get(wallPrefab); 
         }
         Debug.Assert(false, "Unsupport type:" + type);
         return null;
