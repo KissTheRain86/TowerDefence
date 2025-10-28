@@ -61,3 +61,4 @@ public static class DirectionExtensions
         return halfVectors[(int)direction];
     }
 }
+
