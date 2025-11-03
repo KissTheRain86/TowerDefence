@@ -60,6 +60,7 @@ public class Game : MonoBehaviour
         }
 
         enemies.GameUpdate();
+        board.GameUpdate();
     }
 
     private void OnValidate()

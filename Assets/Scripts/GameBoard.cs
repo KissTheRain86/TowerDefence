@@ -21,6 +21,8 @@ public class GameBoard : MonoBehaviour
     List<GameTile> spawnPoints = new();
     GameTileContentFactory contentFactory;
 
+    List<GameTileContent> updatingContent = new();//要update的元素
+
     bool showGrid,showPaths;
 
     public bool ShowPaths
@@ -67,7 +69,7 @@ public class GameBoard : MonoBehaviour
 
     public GameTile GetTile(Ray ray)
     {
-        if (Physics.Raycast(ray,out RaycastHit hit))
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1))
         {
             int x = (int)(hit.point.x + size.x * 0.5f);
             int y = (int)(hit.point.z + size.y * 0.5f);
@@ -127,6 +129,13 @@ public class GameBoard : MonoBehaviour
         ToggleSpawnPoint(tiles[0]);
     }
 
+    public void GameUpdate()
+    {
+        for (int i = 0; i < updatingContent.Count; i++)
+        {
+            updatingContent[i].GameUpdate();
+        }
+    }
 
     public bool FindPaths()
     {
@@ -249,18 +258,28 @@ public class GameBoard : MonoBehaviour
     {
         if (tile.Content.Type == GameTileContentType.Tower)
         {
+            updatingContent.Remove(tile.Content);
             tile.Content = contentFactory.Get(GameTileContentType.Empty);
             FindPaths();
         }
         else if (tile.Content.Type == GameTileContentType.Empty)
         {
             tile.Content = contentFactory.Get(GameTileContentType.Tower);
-            if (!FindPaths())
+            if (FindPaths())
+            {
+                updatingContent.Add(tile.Content);
+            }
+            else
             {
                 //回退
                 tile.Content = contentFactory.Get(GameTileContentType.Empty);
                 FindPaths();
             }
+        }
+        else if(tile.Content.Type == GameTileContentType.Wall)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Tower);
+            updatingContent.Add(tile.Content);
         }
     }
 
