@@ -60,6 +60,7 @@ public class Game : MonoBehaviour
         }
 
         enemies.GameUpdate();
+        Physics.SyncTransforms();
         board.GameUpdate();
     }
 
