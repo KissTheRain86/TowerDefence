@@ -7,16 +7,31 @@ public class Tower : GameTileContent
     [SerializeField, Range(1.5f, 10.5f)]
     float targetingRange = 1.5f;
 
+    [SerializeField]
+    Transform turret = default,laserBeam = default;
+
     const int enemyLayerMask = 1 << 9;//enemy的layer
 
     TargetPoint target;
+
+    Vector3 laserBeamScale;
+
+    private void Awake()
+    {
+        laserBeamScale = laserBeam.localScale;
+    }
     public override void GameUpdate()
     {
         base.GameUpdate();
         //有目标的话 锁定 直到出范围 重新检测
         if (TrackTarget() || AquireTaget())
         {
-            Debug.Log("Searching for target...");
+            //Debug.Log("Searching for target...");
+            Shoot();
+        }
+        else
+        {
+            laserBeam.localScale = Vector3.zero;
         }
     }
 
@@ -51,6 +66,19 @@ public class Tower : GameTileContent
             return false;
         }
         return true;
+    }
+
+
+    void Shoot()
+    {
+        Vector3 point = target.Position;
+        turret.LookAt(point);
+        laserBeam.localRotation = turret.localRotation;
+
+        float d = Vector3.Distance(turret.position, point);
+        laserBeamScale.z = d;
+        laserBeam.localScale = laserBeamScale;
+        laserBeam.localPosition = turret.localPosition + 0.5f * d * laserBeam.forward;
     }
 
     private void OnDrawGizmosSelected()
