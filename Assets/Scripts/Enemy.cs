@@ -10,6 +10,8 @@ public class Enemy : MonoBehaviour
     EnemyFactory originFactory;
     float pathOffset;
     float speed;
+
+    float Health { get; set; }
     public float Scale { get; private set; }  
 
     public EnemyFactory OriginFactory
@@ -37,6 +39,7 @@ public class Enemy : MonoBehaviour
         model.localScale = new Vector3(scale, scale, scale);
         this.speed = speed;
         this.pathOffset = pathOffset;
+        Health = 100f * scale;
     }
 
     public void SpawnOn(GameTile tile)
@@ -49,10 +52,19 @@ public class Enemy : MonoBehaviour
         PrepareIntro();
     }
 
-    
+    public void ApplyDamage(float damage)
+    {
+        Debug.Assert(damage >= 0, "伤害为负数");
+        Health -= damage;
+    }
 
     public bool GameUpdate()
     {
+        if (Health <= 0)
+        {
+            originFactory.Reclaim(this);
+            return false;
+        }
         progress += Time.deltaTime * progressFactor;
         while (progress >= 1f)
         {  

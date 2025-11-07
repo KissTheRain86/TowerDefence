@@ -7,6 +7,9 @@ public class Tower : GameTileContent
     [SerializeField, Range(1.5f, 10.5f)]
     float targetingRange = 1.5f;
 
+    [SerializeField, Range(1f, 100f)]
+    float damagePerSecond = 10f;
+
     [SerializeField]
     Transform turret = default,laserBeam = default;
 
@@ -36,7 +39,7 @@ public class Tower : GameTileContent
     }
 
     //ËÑÑ°Ä¿±ê
-    static Collider[] targetsBuffer = new Collider[1];
+    static Collider[] targetsBuffer = new Collider[100];
     private bool AquireTaget()
     {
         Vector3 a = transform.localPosition;
@@ -47,7 +50,7 @@ public class Tower : GameTileContent
             );
         if (hits > 0)
         {
-            target = targetsBuffer[0].GetComponent<TargetPoint>();
+            target = targetsBuffer[Random.Range(0,hits)].GetComponent<TargetPoint>();
             Debug.Assert(target != null, "Targeted non-enemy", targetsBuffer[0]);
             return true;
         }
@@ -79,6 +82,8 @@ public class Tower : GameTileContent
         laserBeamScale.z = d;
         laserBeam.localScale = laserBeamScale;
         laserBeam.localPosition = turret.localPosition + 0.5f * d * laserBeam.forward;
+
+        target.Enemy.ApplyDamage(damagePerSecond * Time.deltaTime);
     }
 
     private void OnDrawGizmosSelected()
