@@ -25,6 +25,7 @@ public class Game : MonoBehaviour
 
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
+    TowerType selectTowerType;
     private void Awake()
     {
         board.Initialize(boardSize, tileContentFactory);
@@ -50,6 +51,14 @@ public class Game : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
         {
             board.ShowGrid = !board.ShowGrid;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            selectTowerType = TowerType.Laser;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            selectTowerType = TowerType.Mortar;
         }
 
         spawnProgress += spawnSpeed * Time.deltaTime;
@@ -100,7 +109,7 @@ public class Game : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                board.ToggleTower(tile);
+                board.ToggleTower(tile,selectTowerType);
             }
             else
             {

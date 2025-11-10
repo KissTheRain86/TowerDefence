@@ -17,6 +17,11 @@ public enum DirectionChange
     None,TurnRight,TurnLeft,TurnAround
 }
 
+public enum TowerType
+{
+    Laser,Mortar
+}
+
 public static class DirectionExtensions
 {
     static Quaternion[] rotations =
