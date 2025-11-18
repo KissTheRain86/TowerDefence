@@ -16,20 +16,38 @@ public class Game : MonoBehaviour
     [SerializeField]
     EnemyFactory enemyFactory = default;
 
+    [SerializeField]
+    WarFactory warFactory = default;
+
     [SerializeField,Range(0.1f,10f)]
     float spawnSpeed = 1f;
 
     float spawnProgress;
 
-    EnemyCollection enemies = new EnemyCollection();
+    GameBehaviorCollection enemies = new();
+    GameBehaviorCollection nonEnemies = new();
 
     Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
     TowerType selectTowerType;
+
+    static Game instance;
+
+    public static Shell SpawnShell()
+    {
+        Shell shell = instance.warFactory.Shell;
+        instance.nonEnemies.Add(shell);
+        return shell;
+    }
     private void Awake()
     {
         board.Initialize(boardSize, tileContentFactory);
         board.ShowGrid = true;
+    }
+
+    private void OnEnable()
+    {
+        instance = this;
     }
 
     private void Update()
@@ -71,6 +89,7 @@ public class Game : MonoBehaviour
         enemies.GameUpdate();
         Physics.SyncTransforms();
         board.GameUpdate();
+        nonEnemies.GameUpdate();
     }
 
     private void OnValidate()
