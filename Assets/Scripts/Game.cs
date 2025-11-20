@@ -39,6 +39,13 @@ public class Game : MonoBehaviour
         instance.nonEnemies.Add(shell);
         return shell;
     }
+
+    public static Explosion SpawnExplosion()
+    {
+        Explosion explosion = instance.warFactory.Explosion;
+        instance.nonEnemies.Add(explosion);
+        return explosion;
+    }
     private void Awake()
     {
         board.Initialize(boardSize, tileContentFactory);
