@@ -22,6 +22,11 @@ public enum TowerType
     Laser,Mortar
 }
 
+public enum EnemyType
+{
+    Small,Medium,Large
+}
+
 public static class DirectionExtensions
 {
     static Quaternion[] rotations =

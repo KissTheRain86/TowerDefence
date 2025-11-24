@@ -14,15 +14,12 @@ public class Game : MonoBehaviour
     GameTileContentFactory tileContentFactory = default;
 
     [SerializeField]
-    EnemyFactory enemyFactory = default;
-
-    [SerializeField]
     WarFactory warFactory = default;
 
-    [SerializeField,Range(0.1f,10f)]
-    float spawnSpeed = 1f;
+    [SerializeField]
+    GameScenario scenario = default;
 
-    float spawnProgress;
+    GameScenario.State activeScenario;
 
     GameBehaviorCollection enemies = new();
     GameBehaviorCollection nonEnemies = new();
@@ -50,6 +47,7 @@ public class Game : MonoBehaviour
     {
         board.Initialize(boardSize, tileContentFactory);
         board.ShowGrid = true;
+        activeScenario = scenario.Begin();
     }
 
     private void OnEnable()
@@ -86,12 +84,7 @@ public class Game : MonoBehaviour
             selectTowerType = TowerType.Mortar;
         }
 
-        spawnProgress += spawnSpeed * Time.deltaTime;
-        while (spawnProgress >= 1f)
-        {
-            spawnProgress -= 1f;
-            SpawnEnemy();
-        }
+        activeScenario.Progress();//在最外层调用update
 
         enemies.GameUpdate();
         Physics.SyncTransforms();
@@ -123,8 +116,7 @@ public class Game : MonoBehaviour
             else
             {
                 board.ToggleSpawnPoint(tile);
-            }
-            
+            }           
         }
     }
 
@@ -142,16 +134,16 @@ public class Game : MonoBehaviour
                 //tile.Content = tileContentFactory.Get(GameTileContentType.Destination);
                 board.ToggleWall(tile);
             }
-            
         }
     }
 
-    void SpawnEnemy()
+    public static void SpawnEnemy(EnemyFactory factory,EnemyType type)
     {
-        GameTile spawnPoint = board.GetSpawnPoint(Random.Range(0, board.SpawnPointCount));
-        Enemy enemy = enemyFactory.Get();
+        GameTile spawnPoint =instance.board.GetSpawnPoint(
+            Random.Range(0, instance.board.SpawnPointCount));
+        Enemy enemy = factory.Get(type);
         enemy.SpawnOn(spawnPoint);
-        enemies.Add(enemy);
+        instance.enemies.Add(enemy);
     }
 
 }

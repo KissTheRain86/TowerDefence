@@ -33,13 +33,13 @@ public class Enemy : GameBehavior
     DirectionChange directionChange;
     float directionAngleFrom,directionAngleTo;
 
-    public void Initialize(float scale,float speed, float pathOffset)
+    public void Initialize(float scale,float speed, float pathOffset,float health)
     {
         Scale = scale;
         model.localScale = new Vector3(scale, scale, scale);
         this.speed = speed;
         this.pathOffset = pathOffset;
-        Health = 100f * scale;
+        Health = health;
     }
 
     public void SpawnOn(GameTile tile)

@@ -9,16 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c9aab3d1d1d7eb41a2d7e60dbb754df, type: 3}
-  m_Name: EnemyFactory
+  m_Script: {fileID: 11500000, guid: 9fcfa68fb8234db41a2afe7c68316e15, type: 3}
+  m_Name: CubeScenario
   m_EditorClassIdentifier: 
-  scale:
-    min: 1
-    max: 2
-  pathOffset:
-    min: -0.2
-    max: 0.2
-  speed:
-    min: 1
-    max: 2
-  prefab: {fileID: 7958412190799014832, guid: b450613ad33d3a841a30142ec2f52249, type: 3}
+  waves:
+  - {fileID: 11400000, guid: 9aeef467fd960a74eb1948dc01904625, type: 2}
+  - {fileID: 11400000, guid: e7a880775a466884ba6387485da29aeb, type: 2}
