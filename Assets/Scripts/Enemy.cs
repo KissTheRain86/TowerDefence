@@ -33,6 +33,10 @@ public class Enemy : GameBehavior
     DirectionChange directionChange;
     float directionAngleFrom,directionAngleTo;
 
+    public override void Recycle()
+    {
+        originFactory.Reclaim(this);
+    }
     public void Initialize(float scale,float speed, float pathOffset,float health)
     {
         Scale = scale;
@@ -62,7 +66,7 @@ public class Enemy : GameBehavior
     {
         if (Health <= 0)
         {
-            originFactory.Reclaim(this);
+            Recycle();
             return false;
         }
         progress += Time.deltaTime * progressFactor;
@@ -70,7 +74,9 @@ public class Enemy : GameBehavior
         {  
             if (tileTo == null)
             {
-                OriginFactory.Reclaim(this);
+                //todo 用事件中心
+                Game.EnemyReachedDestination();
+                Recycle();
                 return false;
             }
             progress = (progress-1f)/progressFactor;

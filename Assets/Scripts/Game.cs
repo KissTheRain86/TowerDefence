@@ -19,6 +19,11 @@ public class Game : MonoBehaviour
     [SerializeField]
     GameScenario scenario = default;
 
+    [SerializeField,Range(0,100)]
+    int startingPlayerHealth = 10;
+
+
+    int playerHealth;
     GameScenario.State activeScenario;
 
     GameBehaviorCollection enemies = new();
@@ -45,6 +50,7 @@ public class Game : MonoBehaviour
     }
     private void Awake()
     {
+        playerHealth = startingPlayerHealth;
         board.Initialize(boardSize, tileContentFactory);
         board.ShowGrid = true;
         activeScenario = scenario.Begin();
@@ -84,6 +90,23 @@ public class Game : MonoBehaviour
             selectTowerType = TowerType.Mortar;
         }
 
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            BeginNewGame();
+        }
+
+        if(playerHealth<=0 && startingPlayerHealth > 0)
+        {
+            Debug.Log("Defeat!");
+            BeginNewGame();
+        }
+        if (!activeScenario.Progress() && enemies.IsEmpty)
+        {
+            Debug.Log("Victory!");
+            BeginNewGame();
+            activeScenario.Progress();
+        }
+
         activeScenario.Progress();//在最外层调用update
 
         enemies.GameUpdate();
@@ -104,6 +127,14 @@ public class Game : MonoBehaviour
         }
     }
 
+    void BeginNewGame()
+    {
+        playerHealth = startingPlayerHealth;
+        enemies.Clear();
+        nonEnemies.Clear();
+        board.Clear();
+        activeScenario = scenario.Begin();
+    }
     private void HandleAlternativeTouch()
     {
         GameTile tile = board.GetTile(TouchRay);
@@ -146,4 +177,8 @@ public class Game : MonoBehaviour
         instance.enemies.Add(enemy);
     }
 
+    public static void EnemyReachedDestination()
+    {
+        instance.playerHealth -= 1;
+    }
 }
