@@ -22,6 +22,10 @@ public class Game : MonoBehaviour
     [SerializeField,Range(0,100)]
     int startingPlayerHealth = 10;
 
+    [SerializeField,Range(1f,10f)]
+    float playSpeed = 1f;
+
+    const float pausedTimeScale = 0f;
 
     int playerHealth;
     GameScenario.State activeScenario;
@@ -90,6 +94,16 @@ public class Game : MonoBehaviour
             selectTowerType = TowerType.Mortar;
         }
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Time.timeScale = Time.timeScale > pausedTimeScale ? pausedTimeScale : playSpeed;
+        }
+        else if (Time.timeScale > pausedTimeScale)
+        {
+            Time.timeScale = playSpeed;
+        }
+
+        //开始游戏
         if (Input.GetKeyDown(KeyCode.B))
         {
             BeginNewGame();
