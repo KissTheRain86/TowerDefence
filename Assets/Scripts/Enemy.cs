@@ -7,6 +7,11 @@ public class Enemy : GameBehavior
     [SerializeField]
     Transform model = default;
 
+    [SerializeField]
+    EnemyAnimationConfig animationConfig = default;
+
+    EnemyAnimator animator;
+
     EnemyFactory originFactory;
     float pathOffset;
     float speed;
@@ -33,8 +38,16 @@ public class Enemy : GameBehavior
     DirectionChange directionChange;
     float directionAngleFrom,directionAngleTo;
 
+    private void Awake()
+    {
+        animator.Configure(
+            model.GetChild(0).gameObject.AddComponent<Animator>(),
+            animationConfig
+            );
+    }
     public override void Recycle()
     {
+        animator.Stop();
         originFactory.Reclaim(this);
     }
     public void Initialize(float scale,float speed, float pathOffset,float health)
@@ -44,6 +57,7 @@ public class Enemy : GameBehavior
         this.speed = speed;
         this.pathOffset = pathOffset;
         Health = health;
+        animator.Play();
     }
 
     public void SpawnOn(GameTile tile)
