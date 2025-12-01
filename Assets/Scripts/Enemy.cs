@@ -57,7 +57,7 @@ public class Enemy : GameBehavior
         this.speed = speed;
         this.pathOffset = pathOffset;
         Health = health;
-        animator.Play(speed/scale);
+        animator.PlayIntro();
     }
 
     private void OnDestroy()
@@ -83,6 +83,20 @@ public class Enemy : GameBehavior
 
     public override bool GameUpdate()
     {
+        if(animator.CurrentClip == EnemyAnimator.Clip.Intro)
+        {
+            if (!animator.IsDone) return true;
+            animator.PlayMove(speed / Scale);
+        }
+        else if(animator.CurrentClip == EnemyAnimator.Clip.Outro)
+        {
+            if (animator.IsDone)
+            {
+                Recycle();
+                return false;
+            }
+            return true;
+        }
         if (Health <= 0)
         {
             Recycle();
@@ -95,7 +109,7 @@ public class Enemy : GameBehavior
             {
                 //todo 用事件中心
                 Game.EnemyReachedDestination();
-                Recycle();
+                animator.PlayOutro();
                 return false;
             }
             progress = (progress-1f)/progressFactor;
@@ -176,6 +190,7 @@ public class Enemy : GameBehavior
     void PrepareIntro()
     {
         positionFrom = tileFrom.transform.localPosition;
+        transform.localPosition = positionFrom;
         positionTo = tileFrom.ExitPoint;
         direction = tileFrom.PathDirection;
         directionChange = DirectionChange.None;
