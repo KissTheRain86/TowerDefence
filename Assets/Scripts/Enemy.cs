@@ -10,6 +10,16 @@ public class Enemy : GameBehavior
     [SerializeField]
     EnemyAnimationConfig animationConfig = default;
 
+    Collider targetPointCollider;
+    public Collider TargetPointCollider
+    {
+        set
+        {
+            Debug.Assert(targetPointCollider == null, "Redefined collider");
+            targetPointCollider = value;
+        }
+    }
+
     EnemyAnimator animator;
 
     EnemyFactory originFactory;
@@ -29,6 +39,8 @@ public class Enemy : GameBehavior
             originFactory = value;
         } 
     }
+
+    public bool IsValidTarget => animator.CurrentClip == EnemyAnimator.Clip.Move;
 
     GameTile tileFrom, tileTo;
     Vector3 positionFrom, positionTo;
@@ -58,6 +70,7 @@ public class Enemy : GameBehavior
         this.pathOffset = pathOffset;
         Health = health;
         animator.PlayIntro();
+        targetPointCollider.enabled = false;
     }
 
     private void OnDestroy()
@@ -88,8 +101,9 @@ public class Enemy : GameBehavior
         {
             if (!animator.IsDone) return true;
             animator.PlayMove(speed / Scale);
+            targetPointCollider.enabled = true;
         }
-        else if(animator.CurrentClip == EnemyAnimator.Clip.Outro)
+        else if(animator.CurrentClip >=EnemyAnimator.Clip.Outro)
         {
             if (animator.IsDone)
             {
@@ -100,8 +114,9 @@ public class Enemy : GameBehavior
         }
         if (Health <= 0)
         {
-            Recycle();
-            return false;
+            animator.PlayDying();
+            targetPointCollider.enabled = false;
+            return true;
         }
         progress += Time.deltaTime * progressFactor;
         while (progress >= 1f)
@@ -111,6 +126,7 @@ public class Enemy : GameBehavior
                 //todo 用事件中心
                 Game.EnemyReachedDestination();
                 animator.PlayOutro();
+                targetPointCollider.enabled = false;
                 return true;//需要继续update
             }
             progress = (progress-1f)/progressFactor;

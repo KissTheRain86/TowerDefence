@@ -20,7 +20,7 @@ public abstract class Tower : GameTileContent
 
     protected bool TrackTarget(ref TargetPoint target)
     {
-        if (target == null) return false;
+        if (target == null || !target.Enemy.IsValidTarget) return false;
         Vector3 a = transform.localPosition;
         Vector3 b = target.Position;
         if (Vector3.Distance(a, b) > targetingRange + 0.125f * target.Enemy.Scale)

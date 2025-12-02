@@ -30,6 +30,7 @@ public class TargetPoint : MonoBehaviour
     private void Awake()
     {
         Enemy = transform.root.GetComponent<Enemy>();
+        Enemy.TargetPointCollider = GetComponent<Collider>();
         Debug.Assert(Enemy != null, "Target point without enemy root",this);
         Debug.Assert(GetComponent<SphereCollider>() != null,
             "Target point without sphere collider",this);
