@@ -83,7 +83,8 @@ public class Enemy : GameBehavior
 
     public override bool GameUpdate()
     {
-        if(animator.CurrentClip == EnemyAnimator.Clip.Intro)
+        animator.GameUpdate();
+        if (animator.CurrentClip == EnemyAnimator.Clip.Intro)
         {
             if (!animator.IsDone) return true;
             animator.PlayMove(speed / Scale);
