@@ -111,7 +111,7 @@ public class Enemy : GameBehavior
                 //todo 用事件中心
                 Game.EnemyReachedDestination();
                 animator.PlayOutro();
-                return false;
+                return true;//需要继续update
             }
             progress = (progress-1f)/progressFactor;
             PrepareNextState();
