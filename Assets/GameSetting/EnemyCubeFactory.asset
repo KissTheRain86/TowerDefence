@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyCubeFactory
   m_EditorClassIdentifier: 
   small:
-    prefab: {fileID: 7958412190799014832, guid: b450613ad33d3a841a30142ec2f52249,
+    prefab: {fileID: 5181105734355366377, guid: 81613c1f1997ac04d9b168d03c9955ba,
       type: 3}
     scale:
       min: 0.5
@@ -28,7 +28,7 @@ MonoBehaviour:
       min: 40
       max: 50
   medium:
-    prefab: {fileID: 7958412190799014832, guid: d52329d8d0a8f1343ae58c7b60914085,
+    prefab: {fileID: 5181105734355366377, guid: 81613c1f1997ac04d9b168d03c9955ba,
       type: 3}
     scale:
       min: 0.9
@@ -43,7 +43,7 @@ MonoBehaviour:
       min: 90
       max: 120
   large:
-    prefab: {fileID: 7958412190799014832, guid: 6e2369c3ac5eb9940a18a1fba8cb70f8,
+    prefab: {fileID: 5181105734355366377, guid: 81613c1f1997ac04d9b168d03c9955ba,
       type: 3}
     scale:
       min: 1.2
