@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db785bfcfc6226a44aa3619f9f6ac111, type: 3}
   m_Name: GrenadierAnimations
   m_EditorClassIdentifier: 
+  moveAnimationSpeed: 2
   move: {fileID: 7400000, guid: 87d6a17fa750efb4d9984517dce3110e, type: 2}
   intro: {fileID: 7400000, guid: 2ec5c7d24bb033044b8ed91e0b88a152, type: 2}
   outro: {fileID: 7400000, guid: 609fd215ca51b494bada29417a3ee32b, type: 2}

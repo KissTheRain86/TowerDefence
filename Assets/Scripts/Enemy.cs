@@ -100,7 +100,7 @@ public class Enemy : GameBehavior
         if (animator.CurrentClip == EnemyAnimator.Clip.Intro)
         {
             if (!animator.IsDone) return true;
-            animator.PlayMove(speed / Scale);
+            animator.PlayMove(animationConfig.MoveAnimationSpeed * speed / Scale);
             targetPointCollider.enabled = true;
         }
         else if(animator.CurrentClip >=EnemyAnimator.Clip.Outro)

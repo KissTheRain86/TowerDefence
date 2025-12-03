@@ -72,22 +72,31 @@ public class MortarTower : Tower
         dir.y = targetPoint.z-launchPoint.z;
         float x = dir.magnitude;//向量长度
         float y = -launchPoint.y;
-        dir /= x;//单位向量
+        dir = (dir.sqrMagnitude < 0.0001f) ? Vector2.up : dir.normalized;//单位向量
 
         float g = 9.81f;
         float s = launchSpeed;//速度大小 斜方向
         float s2 = s * s;
 
         float r = s2 * s2 - g * (g * x * x + 2f * y * s2);
+
+        if (r < 0f)
+        {
+            Debug.LogWarning($"Target unreachable! r={r} x={x} y={y} speed={s}");
+            return; // 或者改为只打直射
+        }
+
         //物理问题确定落点 初始速度 求发射角度
         float tanTheta = (s2 + Mathf.Sqrt(r)) / (g * x);
         float cosTheta = Mathf.Cos(Mathf.Atan(tanTheta));
         float sinTheta = cosTheta * tanTheta;
 
         mortar.localRotation = Quaternion.LookRotation(new Vector3(dir.x, tanTheta, dir.y));
+
+        Vector3 launchVelecity = new Vector3(s * cosTheta * dir.x, s * sinTheta, s * cosTheta * dir.y);
+
         Game.SpawnShell().Initialize(
-            launchPoint, targetPoint,
-            new Vector3(s * cosTheta * dir.x, s * sinTheta, s * cosTheta * dir.y),
+            launchPoint, targetPoint,launchVelecity,
             shellBlastRadius,shellDamage);
 
         //Vector3 prev = launchPoint, next;
